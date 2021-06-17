@@ -76,5 +76,7 @@ describe(PhotoFrameComponent.name, () => {
     const img: HTMLElement = fixture.nativeElement.querySelector('img');
     expect(img.getAttribute('src')).toBe(src);
     expect(img.getAttribute('alt')).toBe(description);
-  })
+  });
+
+  
 });
