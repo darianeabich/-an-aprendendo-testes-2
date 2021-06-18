@@ -20,10 +20,31 @@ describe(ActionDirective.name, () => {
 
   it(`(D) (@Output appAction) should emit event with payload when ENTER key is pressed`, () => {
     const divEl: HTMLElement = fixture.nativeElement.querySelector('.dummy-component');
-    const event = new KeyboardEvent('keyup', {key: 'Enter'});
+    const event = new KeyboardEvent('keyup', {key: 'Enter'}); // com tecla
     divEl.dispatchEvent(event);
-    expect(component.hasEvent()).toBe(true);
-  })
+    expect(component.hasEvent()).toBeTrue();
+  });
+
+  it(`(D) (@Output appAction) should emit event with payload when clicked`, () => {
+    const divEl: HTMLElement = fixture.nativeElement.querySelector('.dummy-component');
+    const event = new Event('click'); // com click
+    divEl.dispatchEvent(event);
+    expect(component.hasEvent()).toBeTrue();
+  });
+
+  // acima os testes estão separados, abaixo os testes foram unidos a fim de exemplo
+  // pode escolher o que deseja, mas separados fica mais claro
+  // unidos houve a necessidade de criar um método na class para limpar a expectativa e antes de fazer a nova
+  it(`(D) (@Output appAction) should emit event with payload when clicked or ENTER key pressed`, () => {
+    const divEl: HTMLElement = fixture.nativeElement.querySelector('.dummy-component');
+    const clickEvent = new Event('click');  // com click
+    const keyboardEvent = new KeyboardEvent('keyup', {key: 'Enter'}); // com tecla
+    divEl.dispatchEvent(clickEvent);
+    expect(component.hasEvent()).withContext('Click event').toBeTrue();
+    component.resetForNewExpectation();
+    divEl.dispatchEvent(keyboardEvent);
+    expect(component.hasEvent()).withContext('Keyboard event "keyup"').toBeTrue();
+  });
 });
 
 @Component({
@@ -39,5 +60,9 @@ class ActionDirectiveTestComponent {
 
   public hasEvent(): boolean {
     return !!this.event;
+  }
+
+  public resetForNewExpectation(): void {
+    this.event = null;
   }
 }
