@@ -29,12 +29,36 @@ describe(PhotoListComponent.name, () => {
   });
 
   it(`(D) Should display board when data arrives`, () => {
-    // se tem dado, loader não é exibir e tem que mostrar a lista
-    // se não, loader é exibido e não pode mostrar a lista
-    fixture.detectChanges();
     const photos = buildPhotosList();
     spyOn(service, 'getPhotos')
       .and.returnValue(of(photos)); //retorno de um observable com lista de photos
+    fixture.detectChanges(); // nesse caso, só pode ser chamado após o spyOn,ou seja, após o serviço ser modificado
+    const board = fixture.nativeElement
+      .querySelector('app-photo-board'); // se estou exibindo, terá este elemento no navegador
+    const loader = fixture.nativeElement
+      .querySelector('.loader'); // se existir, está carregando
+    expect(board)
+      .withContext('Should display board')
+      .not.toBeNull();
+    expect(loader)
+      .withContext('Should not display loader')
+      .toBeNull();
+  });
 
-  })
+  it(`(D) Should display loader while waiting for data`, () => {
+    const photos = buildPhotosList();
+    spyOn(service, 'getPhotos')
+      .and.returnValue(null); // forçar não ter dados
+    fixture.detectChanges(); // nesse caso, só pode ser chamado após o spyOn,ou seja, após o serviço ser modificado
+    const board = fixture.nativeElement
+      .querySelector('app-photo-board');
+    const loader = fixture.nativeElement
+      .querySelector('.loader'); // se não tem dado nenhum, spinner é exibido
+    expect(board)
+      .withContext('Should not display board')
+      .toBeNull();
+    expect(loader)
+      .withContext('Should display loader')
+      .not.toBeNull();
+  });
 });
